@@ -1,6 +1,19 @@
 import UserModel from '../model/User.model.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import ENV from '../config.js'
+
+export async function verifyUser(req, res, next){
+    try {        
+        const { username } = req.method == "GET" ? req.query : req.body;
+
+        let exist = await UserModel.findOne({ username });
+        if(!exist) return res.status(404).send({ error : "Can't find User!"});
+        next();
+    } catch (error) {
+        return res.status(404).send({ error: "Authentication Error"});
+    }
+}
 
 export async function register(req, res) {
     try {
